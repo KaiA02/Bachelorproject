@@ -1,18 +1,113 @@
-<!doctype html>
-<html lang="de">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{{ title }}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-  <header>
-    <h1>Willkommen zu meiner Bachelorarbeit-Webapp 🎓</h1>
-  </header>
+{% extends "base.html" %}
+{% block content %}
 
-  <main>
-    <p>Das ist meine erste Flask-Seite mit HTML-Template!</p>
-  </main>
-</body>
-</html>
+<div class="page">
+
+    <!-- Operatoren -->
+    <div class="clause">
+        <div class="label">find</div>
+        <div class="content">&lt;data-source-1&gt; <span class="italic">from</span>
+            &lt;data-source-1&gt; <span class="italic">where</span>
+            NL predicate on data source-1 <span class="italic">return</span>
+            &lt;object-r&gt; <span class="italic">in</span> &lt;data-source-r&gt; </div>
+    </div>
+    <div class="clause">
+        <div class="label">from</div>
+        <div class="content">&lt;data-source-1&gt; / &lt;object-name&gt; / &lt;interface&gt;</div>
+    </div>
+    <div class="clause">
+        <div class="label">where</div>
+        <div class="content">&lt;NL filter&gt;</div>
+    </div>
+    <div class="clause">
+        <div class="label">return</div>
+        <div class="content">text / table / interface</div>
+    </div>
+    <div class="clause">
+        <div class="label">?</div>
+        <div class="content">metadata from &lt;data-source-1&gt; / &lt;object-name&gt; / &lt;interface&gt; </div>
+    </div>
+
+    <!-- Eingabebereich mit "Highlight-Overlay" -->
+    <form method="POST" action="">
+        <!-- Sichtbare farbige Markieung (liegt hintder dem Textfeld) -->
+        <div class="highlight-layer" id="highlight"></div>
+
+        <!-- Eigentliches Eingabefeld -->
+        <textarea name="user_input"
+                  id="user_input"
+                  placeholder="find ... from ... where ... return / ? ..."
+                  autofocus
+        ></textarea>
+
+        <br />
+        <input type="submit" value="Submit" />
+        {% if response %}
+            <p>You entered:</p>
+            <p><strong>{{ response }}</strong></p>
+        {% endif %}
+    </form>
+</div>
+
+<script>
+    // Zweck: Wörter (find, from, where, return, ?) im Overlay hervorheben,
+    // während der Nutzer tippt – das Textarea bleibt „echt“, Overlay rendert farbig.
+    document.addEventListener('DOMContentLoaded', function() {
+        const textarea = document.getElementById('user_input');
+        const highlightLayer = document.getElementById('highlight');
+        const keywords = ["find", "from", "where", "return", "?"];
+
+        // Hilfsfunktion: Regex-Sonderzeichen escapen
+        function escapeRegex(s) {
+            return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+
+        // In zwei Gruppen trennen: \w-Wörter vs. Nicht-\w (Symbole wie "?")
+        const wordKeywords = keywords.filter(k => /^\w+$/.test(k));
+        const symbolKeywords = keywords.filter(k => !/^\w+$/.test(k));
+
+        // Regex bauen
+        const wordRegex = wordKeywords.length
+            ? new RegExp("\\b(" + wordKeywords.join("|") + ")\\b", "gi")
+            : null;
+
+        const symbolRegex = symbolKeywords.length
+            ? new RegExp("(" + symbolKeywords.map(escapeRegex).join("|") + ")", "g")
+            : null;
+
+        // HTML escapen, damit <...> als Text erscheint
+        function escapeHtml(s) {
+            return s
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function highlightText() {
+            const text = textarea.value;
+            let out = escapeHtml(text);
+
+            // 2) Wort-Keywords (mit Wortgrenzen) highlighten
+            if (wordRegex) {
+               out = out.replace(wordRegex, match => `<span class="keyword">${match}</span>`);
+            }
+            // 3) Symbol-Keywords (ohne Wortgrenzen) highlighten
+            if (symbolRegex) {
+                 out = out.replace(symbolRegex, match => `<span class="keyword">${match}</span>`);
+            }
+
+            // 4) Ausgabe ins Overlay; anhängen von "\n", damit die Höhe stimmt
+            highlightLayer.innerHTML = out + (text.endsWith("\n") ? "\n" : "");
+            // Overlay-Höhe an Textarea-Inhalt anpassen (komfortableres Tippen)
+            highlightLayer.style.height = textarea.scrollHeight + "px";
+        }
+
+        // Initial und bei Eingaben aktualisieren
+        textarea.addEventListener("input", highlightText);
+        highlightText();
+
+    });
+</script>
+
+{% endblock %}

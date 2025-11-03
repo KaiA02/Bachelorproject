@@ -1,13 +1,124 @@
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  background: #e0f2fe;
-  color: #111827;
-  padding: 1.5rem;
+ /* Grundfarben/Variablen */
+:root{
+  --fg:#333;
+  --muted:#444;
+  --border:#ddd;
+  --bg:#fff;
+  --accent:#007bff;
 }
-h1 {
-  color: #2563eb;
+
+*{ box-sizing: border-box; }
+html, body{ height:100%; }
+
+
+body{
+  margin:0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Courier New", Courier, ui-monospace, Menlo, Consolas, monospace;
 }
-p {
-  font-size: 1.1rem;
+
+.italic{
+    font-style: italic;
 }
+
+.topbar{
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand{ font-weight: 700; }
+
+.page-wrap{
+  padding: 40px 20px;
+}
+
+.page{
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.clause{
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 36px 0;
+}
+
+.label{
+  display: inline-block;
+  background: #f6f6f6;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.content{
+  font-size: 1.05rem;
+  color: var(--muted);
+}
+
+/* Formular + Overlay-Highlighting */
+form{
+  margin-top: 48px;
+  position: relative;
+}
+
+/* Das Overlay zeigt farbige Tokens an, liegt hinter dem Textfeld */
+.highlight-layer{
+  position: absolute;
+  inset: 0;              /* top/left/right/bottom = 0 */
+  padding: 12px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  white-space: pre-wrap; /* Zeilenumbrüche beibehalten */
+  word-wrap: break-word;
+  font: inherit;
+  line-height: 1.4;
+  overflow: hidden;
+  color: transparent;    /* Text unsichtbar, nur farbige <span> sind sichtbar */
+}
+
+/* Schlüsselwörter im Overlay */
+.highlight-layer .keyword{
+  color: #00BFFF;
+  font-weight: 700;
+}
+
+/* Das echte Eingabefeld */
+textarea{
+  position: relative;
+  background: transparent;   /* Overlay „scheint durch“ */
+  caret-color: black;        /* Cursor sichtbar */
+  width: 100%;
+  min-height: 120px;
+  max-height: 400px;
+  font: inherit;
+  line-height: 1.4;
+  padding: 12px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  resize: none;
+  outline: none;
+  overflow-y: hidden;
+  z-index: 1;                /* über dem Overlay */
+}
+
+textarea:focus{ border-color: var(--accent); }
+
+input[type="submit"]{
+  margin-top: 16px;
+  padding: 10px 20px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover{ filter: brightness(0.9); }
