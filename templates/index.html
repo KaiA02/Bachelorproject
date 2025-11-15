@@ -43,8 +43,11 @@
         <br />
         <input type="submit" value="Submit" />
         {% if response %}
-            <p>You entered:</p>
-            <p><strong>{{ response }}</strong></p>
+            <p><strong>Deine Eingabe:</strong></p>
+            <pre>{{ user_input }}</pre>
+
+            <p><strong>Antwort{% if engine %} (Quelle: {{ engine }}){% endif %}:</strong></p>
+            <pre>{{ response }}</pre>
         {% endif %}
     </form>
 </div>
