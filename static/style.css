@@ -122,3 +122,9 @@ input[type="submit"]{
 }
 
 input[type="submit"]:hover{ filter: brightness(0.9); }
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}

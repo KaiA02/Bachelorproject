@@ -6,20 +6,24 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 def extract_chatgpt_query(prompt: str) -> str:
     lower = prompt.lower()
 
-    if "find" in lower and " from " in lower:
-        start = lower.find("find") + len("find")
-        end = lower.find(" from ", start)
-        query = prompt[start:end].strip()
-        return query.strip()
+    if "find" not in lower or " from " not in lower:
+        return ""
 
-    return prompt.strip()
+    start = lower.find("find") + len("find")
+    end = lower.find(" from ", start)
+    query = prompt[start:end].strip()
+
+    return query.strip()
 
 
 def get_chatgpt_answer_from_prompt(prompt: str) -> str:
-    question = extract_chatgpt_query(prompt)
-
     if not OPENAI_API_KEY or OPENAI_API_KEY.strip() == "":
         return "Fehler: Kein OpenAI API-Key gefunden."
+
+    question = extract_chatgpt_query(prompt)
+
+    if not question:
+        return "Ungültige Query. Nutze das Muster: 'find <Frage> from chatgpt ..."
 
     try:
         responses = client.chat.completions.create(
